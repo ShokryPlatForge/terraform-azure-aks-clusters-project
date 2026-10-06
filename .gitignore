@@ -1,0 +1,27 @@
+# Local .terraform directories
+**/.terraform/*
+
+# State lives in Azure Storage; local copies (bootstrap) must never be committed.
+*.tfstate
+*.tfstate.*
+
+# Plans can contain sensitive values.
+*.tfplan
+tfplan
+
+crash.log
+crash.*.log
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Generated from bootstrap output; account-specific.
+backend.hcl
+
+# Personal overrides, e.g. your IP for api_server_authorized_ip_ranges.
+*.local.tfvars
+
+.DS_Store
+.vscode/*
