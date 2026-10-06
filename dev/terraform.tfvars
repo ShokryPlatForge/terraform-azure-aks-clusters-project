@@ -1,9 +1,8 @@
 # Everything that differs between environments lives in this file.
 environment        = "dev"
-# westeurope: locationineligible. northeurope: no B/D SKUs (EC/M/NV only = $$$).
-# eastus: usually cheapest + Standard_B2s for personal subs. Verify before apply:
-#   az vm list-skus --location eastus --size Standard_B2s -o table
-# If eastus fails (ineligible), try: centralus, southcentralus, westus2, swedencentral
+# westeurope: locationineligible. northeurope: EC/M/NV only.
+# eastus: this subscription has no B-series; smallest GP size in the AKS allow-list is D2s_v4.
+#   az vm list-skus --location eastus --size Standard_D2s_v4 -o table
 location           = "eastus"
 region_code        = "eus"
 vnet_address_space = "10.10.0.0/16"
@@ -15,7 +14,7 @@ clusters = {
     # Pin after checking: az aks get-versions --location eastus -o table
     # aks_cluster_version = "1.33"
 
-    system_vm_size    = "Standard_B2s"
+    system_vm_size    = "Standard_D2s_v4"
     system_node_count = 1
 
     # Lock the API server to your IP (curl -s https://ifconfig.me):
