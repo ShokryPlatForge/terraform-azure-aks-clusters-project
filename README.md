@@ -1,15 +1,19 @@
-# terraform-azure-aks-clusters-weu
+# terraform-azure-aks-clusters-project
 
-Terraform project that deploys AKS clusters in **West Europe** using the module in `terraform-azure-aks-module`. It plays the role that `terraform-rancher-clusters-usw2` plays for EKS: **one folder per environment**, each with its own remote state, calling the cluster module once per cluster.
+Terraform project that deploys AKS clusters in **West Europe**. **`dev/`** calls the module from **Terraform Cloud**:
+
+`app.terraform.io/PlatformForge/aks/azurerm` **1.1.0**
+
+State and runs use org **PlatformForge**, workspace **`aks-clusters-dev-weu`**. See [docs/terraform-cloud.md](docs/terraform-cloud.md).
 
 ```text
 AKS_project/
-├── terraform-azure-aks-module/           ← the module (like terraform-aws-upwork-eks-clusters)
+├── terraform-azurerm-aks/           ← the module (like terraform-aws-upwork-eks-clusters)
 └── terraform-azure-aks-clusters-weu/     ← this repo (like terraform-rancher-clusters-usw2)
     ├── bootstrap/          one-time: storage account that holds Terraform state
     ├── backend.hcl         generated from bootstrap; shared by all environments (gitignored)
     └── dev/                one environment = one folder = one state file
-        ├── remote_backend.tf   backend + provider versions (state key "aks-clusters-weu/dev.tfstate")
+        ├── remote_backend.tf   Terraform Cloud (PlatformForge / aks-clusters-dev-weu)
         ├── provider.tf
         ├── variables.tf
         ├── terraform.tfvars    ← everything that differs between environments
@@ -23,7 +27,7 @@ AKS_project/
 
 | `terraform-rancher-clusters-usw2` | This repo |
 |---|---|
-| Terraform Enterprise workspace per folder | Azure Storage state file per folder (`key` in `remote_backend.tf`) |
+| Terraform Enterprise workspace per folder | Terraform Cloud workspace per folder (`cloud` block in `remote_backend.tf`) |
 | Workspace variables in TFE | `terraform.tfvars` in the folder |
 | `remote_state_network.tf` (VPC from another workspace) | `network.tf` (the environment owns its VNet for now) |
 | `cluster-<name>.tf`, one module block per cluster | `clusters.tf`, one module instance per entry in `clusters` |
@@ -186,11 +190,14 @@ Each entry in `clusters` exposes the most useful module inputs (`aks_cluster_ver
 
 ## Module version
 
-Environments use the module through a relative path, `../../terraform-azure-aks-module`, so a module change affects every environment at the next plan. Once both repos are on GitHub, pin each environment to a release tag, and upgrade one environment at a time (dev first):
+**`dev/clusters.tf`** pins the registry module:
 
 ```hcl
-source = "git::https://github.com/ShokryPlatForge/terraform-azure-aks-module.git?ref=v0.1.0"
+source  = "app.terraform.io/PlatformForge/aks/azurerm"
+version = "1.1.0"
 ```
+
+Bump **`version`** per environment after you publish a new module tag in TFC (dev first, then staging/prod).
 
 ---
 

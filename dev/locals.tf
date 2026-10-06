@@ -3,7 +3,7 @@ locals {
 
   tags = {
     environment = var.environment
-    repo        = "terraform-azure-aks-clusters-weu"
+    repo        = "terraform-azure-aks-clusters-project"
     managed-by  = "terraform"
   }
 

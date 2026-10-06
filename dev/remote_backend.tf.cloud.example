@@ -1,10 +1,11 @@
+# Copy to remote_backend.tf when using Terraform Cloud for state (replaces backend "azurerm").
+# Set organization and workspace name to match the workspace you created in Part C.
+
 terraform {
   required_version = ">= 1.9.0, < 2.0.0"
 
-  # State and runs: Terraform Cloud org PlatformForge.
-  # Create a workspace with the same name and working directory "dev".
   cloud {
-    organization = "PlatformForge"
+    organization = "YOUR_TFC_ORG_NAME"
 
     workspaces {
       name = "aks-clusters-dev-weu"

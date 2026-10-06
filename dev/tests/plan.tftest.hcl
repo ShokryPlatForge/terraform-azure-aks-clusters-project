@@ -1,6 +1,8 @@
-# Plans this environment with its real terraform.tfvars against a mocked
-# Azure provider: catches typos and module guard-rail failures before you
-# touch your subscription.  Run: terraform init -backend=false && terraform test
+# Plans this environment with mocked Azure (no subscription). The AKS module is
+# pulled from app.terraform.io — run `terraform login` first, or use
+# clusters.tf.local.example for fully offline plans.
+#
+#   terraform init -backend=false && terraform test
 
 mock_provider "azurerm" {
   mock_data "azurerm_client_config" {

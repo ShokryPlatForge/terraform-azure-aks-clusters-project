@@ -12,38 +12,33 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      # Environments use the module through a relative path (../../terraform-azure-aks-module),
-      # so both repos are checked out side by side.
       - uses: actions/checkout@v4
-        with:
-          path: terraform-azure-aks-clusters-weu
-
-      - uses: actions/checkout@v4
-        with:
-          repository: ShokryPlatForge/terraform-azure-aks-module
-          path: terraform-azure-aks-module
 
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "~1.13"
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Format
-        working-directory: terraform-azure-aks-clusters-weu
         run: terraform fmt -recursive -check -diff
 
       - name: Validate bootstrap
-        working-directory: terraform-azure-aks-clusters-weu/bootstrap
+        working-directory: bootstrap
         run: |
           terraform init -backend=false -input=false
           terraform validate
 
-      - name: Validate and plan-test every environment (mocked, no Azure access)
-        working-directory: terraform-azure-aks-clusters-weu
+      - name: Validate dev (registry module; requires TF_API_TOKEN secret)
+        if: ${{ secrets.TF_API_TOKEN != '' }}
+        working-directory: dev
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: |
-          for dir in $(dirname $(ls */remote_backend.tf)); do
-            echo "::group::$dir"
-            terraform -chdir="$dir" init -backend=false -input=false
-            terraform -chdir="$dir" validate
-            terraform -chdir="$dir" test
-            echo "::endgroup::"
-          done
+          terraform init -backend=false -input=false
+          terraform validate
+          terraform test
+
+      - name: Dev skipped without TF_API_TOKEN
+        if: ${{ secrets.TF_API_TOKEN == '' }}
+        run: |
+          echo "Set repo secret TF_API_TOKEN (Terraform Cloud user/team token) to validate dev/ with private module aks/azurerm."

@@ -1,14 +1,11 @@
+# Local runs with Azure Storage state (after bootstrap/). Not used when dev/remote_backend.tf
+# uses the Terraform Cloud block for PlatformForge.
+
 terraform {
   required_version = ">= 1.9.0, < 2.0.0"
 
-  # State and runs: Terraform Cloud org PlatformForge.
-  # Create a workspace with the same name and working directory "dev".
-  cloud {
-    organization = "PlatformForge"
-
-    workspaces {
-      name = "aks-clusters-dev-weu"
-    }
+  backend "azurerm" {
+    key = "aks-clusters-weu/dev.tfstate"
   }
 
   required_providers {

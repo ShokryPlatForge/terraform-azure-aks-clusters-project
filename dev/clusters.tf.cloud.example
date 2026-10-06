@@ -1,0 +1,17 @@
+# Use ONE of the module sources below in clusters.tf for Terraform Cloud runs.
+# Relative paths (../../terraform-azurerm-aks) only work on your laptop.
+
+# --- Option 1: Private module registry (after publishing terraform-azurerm-aks) ---
+# module "aks" {
+#   source  = "app.terraform.io/YOUR_TFC_ORG_NAME/MODULE_NAME/PROVIDER"
+#   version = "1.1.0"
+#   for_each = local.clusters
+#   ...
+# }
+
+# --- Option 2: Git (no registry; TFC needs VCS access to the module repo) ---
+# module "aks" {
+#   source  = "git::https://github.com/ShokryPlatForge/terraform-azurerm-aks.git?ref=v1.1.0"
+#   for_each = local.clusters
+#   ...
+# }

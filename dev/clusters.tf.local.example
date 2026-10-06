@@ -1,7 +1,10 @@
-module "aks" {
-  source  = "app.terraform.io/PlatformForge/aks/azurerm"
-  version = "1.1.0"
+# Local dev against a sibling clone of the module repo (no TFC registry).
+# Replace clusters.tf temporarily, or use git source instead:
+#
+#   source = "git::https://github.com/ShokryPlatForge/terraform-azurerm-aks.git?ref=v1.1.0"
 
+module "aks" {
+  source   = "../../terraform-azurerm-aks"
   for_each = local.clusters
 
   cluster_name        = each.value.name
@@ -19,8 +22,7 @@ module "aks" {
     node_count = each.value.system_node_count
   }
 
-  node_pools_config = each.value.node_pools_config
-
+  node_pools_config             = each.value.node_pools_config
   enable_node_auto_provisioning = each.value.enable_node_auto_provisioning
 
   admins    = each.value.admins
