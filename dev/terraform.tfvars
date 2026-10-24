@@ -17,6 +17,17 @@ clusters = {
     system_vm_size    = "Standard_D2s_v4"
     system_node_count = 1
 
+    # User workloads (guestbook, astronomy-shop, etc.) — avoids overfilling the system pool.
+    node_pools_config = {
+      apps = {
+        vm_size              = "Standard_D2s_v4"
+        auto_scaling_enabled = true
+        min_count            = 1
+        max_count            = 2
+        node_labels          = { workload = "apps" }
+      }
+    }
+
     # Lock the API server to your IP (curl -s https://ifconfig.me):
     # api_server_authorized_ip_ranges = ["203.0.113.7/32"]
   }
