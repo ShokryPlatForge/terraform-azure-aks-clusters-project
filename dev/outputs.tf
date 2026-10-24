@@ -13,3 +13,17 @@ output "clusters" {
     }
   }
 }
+
+output "key_vault" {
+  value = {
+    name = azurerm_key_vault.this.name
+    id   = azurerm_key_vault.this.id
+  }
+}
+
+output "workload_identities" {
+  description = "Per cluster workload identities; client_id is used by Azure Workload Identity service-account annotations."
+  value = {
+    for id, cluster in module.aks : id => cluster.workload_identities
+  }
+}
