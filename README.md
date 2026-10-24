@@ -6,6 +6,25 @@ Terraform project that deploys AKS clusters in **West Europe**. **`dev/`** calls
 
 State and runs use org **PlatformForge**, workspace **`aks-clusters-dev-weu`**. See [docs/terraform-cloud.md](docs/terraform-cloud.md).
 
+## Cross-cloud lab feature branch
+
+The `feature/aks-block1-2` branch is the reviewed AKS lab extension. It keeps
+the existing module and HCP Terraform workspace authoritative while adding:
+
+- `westeurope` deployment of `aks-astronomyshop` with Azure CNI Overlay.
+- `dev` and `resilience` capacity tiers; resilience uses three zonal system
+  nodes and a zonal autoscaling application pool.
+- Public API access restricted by `default_api_server_authorized_ip_ranges`.
+- Key Vault `kv-astronomyshop-weu` with RBAC authorization.
+- An External Secrets workload identity bound to Key Vault Secrets User and an
+  AKS bootstrap administrator object ID for the GitHub OIDC identity.
+
+The control repository runs this branch by sending its exact commit SHA to the
+VCS-connected HCP Terraform workspace. Do not switch the workspace VCS branch
+or apply the feature branch locally while another owner is working on `main`.
+Review and merge this repository only after the feature-branch plan and E2E
+validation succeed.
+
 ```text
 AKS_project/
 ├── terraform-azurerm-aks/           ← the module (like terraform-aws-upwork-eks-clusters)
