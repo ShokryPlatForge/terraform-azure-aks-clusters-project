@@ -17,13 +17,17 @@ clusters = {
     system_vm_size    = "Standard_D2s_v4"
     system_node_count = 1
 
-    # User workloads (guestbook, astronomy-shop, etc.) — avoids overfilling the system pool.
+    # User / tenant workloads (guestbook, astronomy-shop, …) on a dedicated pool.
+    # Quota: each D2s_v4 = 2 vCPUs (Standard DSv4 family). Need at least:
+    #   1 system node + apps min_count  →  (1 + min_count) × 2 vCPUs
+    # For min_count=2 below: raise DSv4 family quota to ≥ 6 (3 nodes). For max_count=3: ≥ 8.
+    #   az vm list-usage -l eastus -o table
     node_pools_config = {
       apps = {
         vm_size              = "Standard_D2s_v4"
         auto_scaling_enabled = true
-        min_count            = 1
-        max_count            = 2
+        min_count            = 2
+        max_count            = 3
         node_labels          = { workload = "apps" }
       }
     }
